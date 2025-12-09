@@ -1,0 +1,15 @@
+﻿services:
+  web:
+    build:
+      dockerfile: Terminator.Web/Dockerfile
+      context: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - path: ./.env
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,133 @@
+﻿
+### Variables
+@baseUrl = http://localhost:5000/api/v1
+
+### 1
+# first sync
+POST {{baseUrl}}/sync
+Content-Type: application/json
+
+{
+  "blobs": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "updatedAt": "2024-04-21T10:00:00.000Z",
+      "isDeleted": false,
+      "iv": "Q0NDQ0NDQ0NDQ0ND",
+      "blob": "eyJkYXRhIjoiVGhpcyBpcyBteSBmaXJzdCBzc2gga2V5In0="
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "updatedAt": "2024-04-21T11:00:00.000Z",
+      "isDeleted": false,
+      "iv": "ODg4ODg4ODg4ODg4",
+      "blob": "eyJkYXRhIjoiQW5vdGhlciBzZWNyZXQga2V5IGRhdGEifQ=="
+    }
+  ],
+  "lastSyncTime": "2024-04-21T09:00:00.000Z"
+}
+
+### 2
+# stale
+POST {{baseUrl}}/sync
+Content-Type: application/json
+
+{
+  "blobs": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "updatedAt": "2023-04-21T10:00:00.000Z",
+      "isDeleted": false,
+      "iv": "Q0NDQ0NDQ0NDQ0ND",
+      "blob": "eyJkYXRhIjoiVGhpcyBpcyBteSBmaXJzdCBzc2gga2V5In0="
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "updatedAt": "2024-04-21T11:00:00.000Z",
+      "isDeleted": false,
+      "iv": "ODg4ODg4ODg4ODg4",
+      "blob": "eyJkYXRhIjoiQW5vdGhlciBzZWNyZXQga2V5IGRhdGEifQ=="
+    }
+  ],
+  "lastSyncTime": "2024-05-21T09:00:00.000Z"
+}
+
+### 3
+# incremental sync
+POST {{baseUrl}}/sync
+Content-Type: application/json
+
+{
+  "blobs": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "updatedAt": "2024-05-22T09:30:00.000Z",
+      "isDeleted": false,
+      "iv": "ODg4ODg4ODg4ODg4",
+      "blob": "eyJkYXRhIjoiVGhpcyBpcyBteSBVUERBVEVEIHNzaCBrZXkifQ=="
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "updatedAt": "2024-05-22T09:35:00.000Z",
+      "isDeleted": true,
+      "iv": "Q0NDQ0NDQ0NDQ0ND",
+      "blob": "eyJkYXRhIjoiQW5vdGhlciBzZWNyZXQga2V5IGRhdGEifQ=="
+    }
+  ],
+  "lastSyncTime": "2024-05-21T12:00:00.000Z"
+}
+
+### 4
+POST {{baseUrl}}/sync
+Content-Type: application/json
+
+{
+  "blobs": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "updatedAt": "2024-05-21T10:00:00Z",
+      "isDeleted": false,
+      "iv": "AAECAwQFBgcICQoL",
+      "blob": "eyJkYXRhIjoiVGhpcyBpcyBteSBvbGQgY29weSBvZiB0aGUga2V5In0="
+    }
+  ],
+  "lastSyncTime": "2024-05-21T12:00:00.000Z"
+}
+
+### 5
+# nothing
+POST {{baseUrl}}/sync
+Content-Type: application/json
+
+{
+  "blobs": [],
+  "lastSyncTime": "2024-05-22T10:00:00.000Z"
+}
+
+### 6
+# nothing but old (pull)
+POST {{baseUrl}}/sync
+Content-Type: application/json
+
+{
+  "blobs": [],
+  "lastSyncTime": "1970-01-01T00:00:00.000Z"
+}
+
+### 7
+# bad length
+POST {{baseUrl}}/sync
+Content-Type: application/json
+
+{
+  "blobs": [
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "updatedAt": "2024-05-23T14:00:00.000Z",
+      "isDeleted": false,
+      "iv": "SGVsbG8=",
+      "blob": "eyJkYXRhIjoiSW52YWxpZCBJViBkYXRhIn0="
+    }
+  ],
+  "lastSyncTime": "2024-05-22T10:00:00.000Z"
+}
