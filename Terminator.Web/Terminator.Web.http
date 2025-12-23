@@ -29,7 +29,6 @@ Content-Type: application/json
 }
 
 ### 3. Login (Get JWT)
-# @name loginRequest
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
