@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Terminator.Core\Terminator.Core.csproj" />
-      <ProjectReference Include="..\Terminator.Infrastructure\Terminator.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

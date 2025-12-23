@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Terminator.Core.Result;
 using Terminator.Web.DTOs;
 
@@ -17,6 +18,18 @@ public class ApiControllerBase : ControllerBase
             ErrorType.Validation => BadRequest(response),
             _ => throw new ArgumentOutOfRangeException(nameof(ErrorType))
         };
+    }
+
+    protected Guid? TryObtainUserId()
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            
+        if (idClaim is null || !Guid.TryParse(idClaim.Value, out var id))
+        {
+            return null;
+        }
+            
+        return id;
     }
 
     private ErrorResponse ToErrorResponse(Result result)

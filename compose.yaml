@@ -7,8 +7,13 @@
       - "8080:8080"
     env_file:
       - path: ./.env
+    volumes:
+      - web-data:/app/data
     networks:
       - app-network
+
+volumes:
+  web-data:
 
 networks:
   app-network:

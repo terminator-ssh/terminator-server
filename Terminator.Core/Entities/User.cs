@@ -2,7 +2,6 @@
 
 namespace Terminator.Core.Entities;
 
-// TODO
 public class User : BaseEntity<Guid>
 {
     public User(
@@ -25,4 +24,5 @@ public class User : BaseEntity<Guid>
     public byte[] AuthSalt { get; set; }
     public byte[] EncryptedMasterKey { get; set; }
     public byte[] LoginHash { get; set; }
+    public IList<EncryptedBlob> Blobs { get; set; } = new List<EncryptedBlob>();
 }

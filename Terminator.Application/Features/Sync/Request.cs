@@ -5,4 +5,5 @@ namespace Terminator.Application.Features.Sync;
 
 public record Request(
     IReadOnlyList<EncryptedBlobDto> Blobs,
-    DateTimeOffset LastSyncTime) : IRequest<Result<Response>>;
+    DateTimeOffset LastSyncTime,
+    Guid UserId) : IRequest<Result<Response>>;

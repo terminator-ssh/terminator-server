@@ -1,17 +1,18 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Terminator.Application.Common;
+using Terminator.Core.Common.Errors;
 using Terminator.Core.Entities;
 using Terminator.Core.Result;
-using Terminator.Infrastructure.Data;
 
 namespace Terminator.Application.Features.Sync;
 
 public class Handler : IRequestHandler<Request, Result<Response>>
 {
-    private readonly ApplicationDbContext _db;
+    private readonly IApplicationDbContext _db;
     private readonly TimeProvider _timeProvider;
 
-    public Handler(ApplicationDbContext db, TimeProvider timeProvider)
+    public Handler(IApplicationDbContext db, TimeProvider timeProvider)
     {
         _db = db;
         _timeProvider = timeProvider;
@@ -19,6 +20,14 @@ public class Handler : IRequestHandler<Request, Result<Response>>
     
     public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
     {
+        var user = await _db.Users
+            .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+        
+        if (user is null)
+        {
+            return Result<Response>.Error(ErrorType.Validation, DomainErrors.User.NotFound);
+        }
+        
         var clientBlobIds = request.Blobs.Select(x => x.Id).ToList();
         var clientBlobsById = 
             request.Blobs
@@ -26,6 +35,7 @@ public class Handler : IRequestHandler<Request, Result<Response>>
                 .ToDictionary(x => x.Id);
         
         var serverBlobTimestampsById = await _db.EncryptedBlobs
+            .Where(x => x.User.Id == request.UserId)
             .Where(x => clientBlobIds.Contains(x.Id))
             .Select(x => new { x.Id, x.UpdatedAt })
             .ToDictionaryAsync(
@@ -47,13 +57,13 @@ public class Handler : IRequestHandler<Request, Result<Response>>
             if (!serverBlobTimestampsById
                     .TryGetValue(clientBlobId, out var serverBlobTimestamp))
             {
-                var encryptedBlob = MapEncryptedBlob(clientBlob);
+                var encryptedBlob = MapEncryptedBlob(clientBlob, user);
                 blobsToAdd.Add(encryptedBlob);
             }
 
             else if (clientBlob.UpdatedAt > serverBlobTimestamp)
             {
-                var encryptedBlob = MapEncryptedBlob(clientBlob);
+                var encryptedBlob = MapEncryptedBlob(clientBlob, user);
                 blobsToUpdate.Add(encryptedBlob);
             }
             
@@ -87,7 +97,7 @@ public class Handler : IRequestHandler<Request, Result<Response>>
     }
 
     // TODO: Mappers
-    private EncryptedBlob MapEncryptedBlob(EncryptedBlobDto dto)
+    private EncryptedBlob MapEncryptedBlob(EncryptedBlobDto dto, User user)
     {
         var iv = Convert.FromBase64String(dto.Iv);
         var blob = Convert.FromBase64String(dto.Blob);
@@ -97,7 +107,7 @@ public class Handler : IRequestHandler<Request, Result<Response>>
             dto.UpdatedAt,
             dto.IsDeleted,
             iv,
-            blob);
+            blob) { User = user };
     }
 
     private EncryptedBlobDto MapEncryptedBlobDto(EncryptedBlob encryptedBlob)

@@ -21,5 +21,5 @@ public class EncryptedBlob : BaseEntity<Guid>
     public bool IsDeleted { get; set; }
     public byte[] InitializationVector { get; set; }
     public byte[] Blob { get; set; }
-    // TODO: public User User { get; set; }
+    public required User User { get; set; }
 }
