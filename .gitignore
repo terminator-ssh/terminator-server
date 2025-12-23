@@ -6,3 +6,7 @@ riderModule.iml
 .idea/
 .vs/
 .vscode/
+data/
+*.db
+*.db-shm
+*.db-wal
