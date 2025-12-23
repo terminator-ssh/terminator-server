@@ -83,6 +83,7 @@ public class Handler : IRequestHandler<Request, Result<Response>>
         updatedOrAddedBlobIds.AddRange(blobsToAdd.Select(x => x.Id));
         
         var newBlobs = await _db.EncryptedBlobs
+            .Where(x => x.User.Id == request.UserId) 
             .Where(x
                 => (x.UpdatedAt > request.LastSyncTime 
                    && !updatedOrAddedBlobIds.Contains(x.Id)) 
