@@ -8,10 +8,10 @@ using Terminator.Core.Result;
 
 namespace Terminator.Application.Features.Auth.Login;
 
-public class LoginHandler(
+public class Handler(
     IApplicationDbContext db, 
     IJwtProvider jwtProvider,
-    ILogger<LoginHandler> logger) 
+    ILogger<Handler> logger) 
     : IRequestHandler<Request, Result<Response>>
 {
     public async Task<Result<Response>> Handle(Request request, CancellationToken ct)
