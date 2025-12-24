@@ -28,8 +28,8 @@ public class Handler(
         var user = new User(
             Guid.NewGuid(),
             request.Username,
-            Convert.FromBase64String(request.AuthSalt),
             Convert.FromBase64String(request.KeySalt),
+            Convert.FromBase64String(request.AuthSalt),
             Convert.FromBase64String(request.EncryptedMasterKey),
             loginHash
         );
