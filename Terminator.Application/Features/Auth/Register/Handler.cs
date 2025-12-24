@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Terminator.Application.Common;
 using Terminator.Core.Common.Errors;
 using Terminator.Core.Entities;
@@ -10,7 +11,8 @@ namespace Terminator.Application.Features.Auth.Register;
 
 public class Handler(
     IApplicationDbContext db, 
-    IJwtProvider jwtProvider) 
+    IJwtProvider jwtProvider,
+    ILogger<Handler> logger) 
     : IRequestHandler<Request, Result<Response>>
 {
     public async Task<Result<Response>> Handle(Request request, CancellationToken ct)
@@ -33,11 +35,25 @@ public class Handler(
             Convert.FromBase64String(request.EncryptedMasterKey),
             loginHash
         );
-
+        
         db.Users.Add(user);
         await db.SaveChangesAsync(ct);
 
         var token = jwtProvider.Generate(user);
+        
+        logger.LogDebug(
+            "Registered user {username}. " +
+            "Requested auth salt: {requestAuthSalt}, " +
+            "requested key salt: {requestKeySalt}. " +
+            "Actual auth salt: {authSalt}, " +
+            "actual key salt: {keySalt}. " +
+            "Generated JWT: {jwt}",
+            user.Username, 
+            request.AuthSalt, 
+            request.KeySalt, 
+            Convert.ToBase64String(user.AuthSalt), 
+            Convert.ToBase64String(user.KeySalt),
+            token);
 
         return Result<Response>.Success(new Response(token));
     }
