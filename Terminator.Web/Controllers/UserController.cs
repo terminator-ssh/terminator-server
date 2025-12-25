@@ -15,7 +15,7 @@ public class UserController(ISender sender) : ApiControllerBase
 {
     [HttpDelete("{userId:guid?}")]
     [Authorize]
-    [Produces(typeof(Delete.Response))]
+    //[Produces(typeof(Delete.Response))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid? userId)
     {
