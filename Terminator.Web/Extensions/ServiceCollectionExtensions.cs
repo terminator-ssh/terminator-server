@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Ardalis.GuardClauses;
@@ -60,7 +61,8 @@ public static class ServiceCollectionExtensions
                     ValidateAudience = true,
                     ValidAudience = authOptions.Audience,
                     
-                    ValidateLifetime = true
+                    ValidateLifetime = true,
+                    RoleClaimType = ClaimTypes.Role
                 };
             });
         

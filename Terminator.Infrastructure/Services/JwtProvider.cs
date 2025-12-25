@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Terminator.Application.Common;
+using Terminator.Core.Common;
 using Terminator.Core.Entities;
 using Terminator.Infrastructure.Common.Options;
 
@@ -21,7 +22,7 @@ public class JwtProvider : IJwtProvider
         Guard.Against.NullOrWhiteSpace(_options.SecretKey);
     }
 
-    public string Generate(User user)
+    public string Generate(Guid userId, string username, string role)
     {
         var handler = new JsonWebTokenHandler();
 
@@ -30,8 +31,9 @@ public class JwtProvider : IJwtProvider
         
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Username)
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, username),
+            new Claim(ClaimTypes.Role, role)
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -44,5 +46,20 @@ public class JwtProvider : IJwtProvider
         };
 
         return handler.CreateToken(tokenDescriptor);
+    }
+
+    public string Generate(Guid userId, string username, RoleType role)
+    {
+        return Generate(userId, username, role.ToString());
+    }
+
+    public string Generate(Admin admin)
+    {
+        return Generate(admin.Id, admin.Username, RoleType.Admin);
+    }
+
+    public string Generate(User user)
+    {
+        return Generate(user.Id, user.Username, RoleType.User);
     }
 }

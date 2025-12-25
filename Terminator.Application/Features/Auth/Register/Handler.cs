@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Terminator.Application.Common;
 using Terminator.Core.Common.Errors;
 using Terminator.Core.Entities;
+using Entities =  Terminator.Core.Entities;
 using Terminator.Core.Result;
 
 namespace Terminator.Application.Features.Auth.Register;
@@ -27,7 +28,7 @@ public class Handler(
         var loginKeyBytes = Convert.FromBase64String(request.LoginKey);
         var loginHash = SHA256.HashData(loginKeyBytes);
 
-        var user = new User(
+        var user = new Entities.User(
             Guid.NewGuid(),
             request.Username,
             Convert.FromBase64String(request.KeySalt),

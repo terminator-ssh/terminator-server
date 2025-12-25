@@ -7,6 +7,10 @@
 @loginKey = YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY= 
 @encryptedMasterKey = SGVsbG8gV29ybGQgVGhpcyBpcyBhIE1hc3RlciBLZXk=
 
+# admin
+@adminUsername = admin
+@adminPassword = admin
+
 
 ### 1. Register User
 POST {{baseUrl}}/auth/register
@@ -136,4 +140,46 @@ Content-Type: application/json
     }
   ],
   "lastSyncTime": "2024-05-22T10:00:00.000Z"
+}
+
+### 9. Admin Login
+POST {{baseUrl}}/auth/admin/login
+Content-Type: application/json
+
+{
+  "username": "{{adminUsername}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+    client.global.set("adminToken", response.body.accessToken);
+%}
+
+### 10. List All Users (Admin Only)
+GET {{baseUrl}}/user/list
+Authorization: Bearer {{adminToken}}
+
+### 11. Delete User (Admin Only)
+@targetUserId = 505421e0-d030-47a3-bb84-119b2bc4b62a
+
+DELETE {{baseUrl}}/user/{{targetUserId}}
+Authorization: Bearer {{adminToken}}
+
+### 12. Create New Admin (Admin Only)
+POST {{baseUrl}}/auth/admin/register
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "username": "super_admin",
+  "password": "SuperStrongPassword123!"
+}
+
+### 13. Change Admin Password
+POST {{baseUrl}}/auth/admin/changePassword
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "newPassword": "newadmin"
 }

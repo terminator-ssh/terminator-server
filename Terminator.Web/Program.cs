@@ -1,6 +1,10 @@
-﻿using Asp.Versioning.ApiExplorer;
+﻿using Ardalis.GuardClauses;
+using Asp.Versioning.ApiExplorer;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Terminator.Application.Extensions;
+using Terminator.Application.Features.Auth.Admin.Register;
+using Terminator.Core.Entities;
 using Terminator.Infrastructure.Common.Options;
 using Terminator.Infrastructure.Data;
 using Terminator.Infrastructure.Extensions;
@@ -66,6 +70,31 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+
+    if (!await db.Admins.AnyAsync())
+    {
+        var adminOptions = app.Configuration
+            .GetSection(DefaultAdminOptions.SectionName)
+            .Get<DefaultAdminOptions>();
+
+        if (!string.IsNullOrWhiteSpace(adminOptions?.Username))
+        {
+            var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+            
+            if(string.IsNullOrWhiteSpace(adminOptions.Password)) logger.LogWarning("No default admin password provided.");
+            var password = adminOptions.Password ?? adminOptions.Username;
+            
+            var request = new Request(adminOptions.Username, password);
+
+            var registerResult = sender.Send(request);
+            if(registerResult.Result.IsSuccessful) logger.LogWarning("Created a default admin user.");
+            else logger.LogWarning("Default admin user not created: {e}", registerResult.Result.ErrorType);
+        }
+        else
+        {
+            logger.LogWarning("No admins found, but no default admin username provided. NOT creating an admin.");
+        }
+    }
 }
 
 app.Run();

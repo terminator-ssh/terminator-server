@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Terminator.Core.Common;
 using Terminator.Core.Result;
 using Terminator.Web.DTOs;
 
@@ -16,6 +17,8 @@ public class ApiControllerBase : ControllerBase
         return result.ErrorType switch
         {
             ErrorType.Validation => BadRequest(response),
+            ErrorType.NotFound => NotFound(response),
+            ErrorType.Unauthorized => Unauthorized(response),
             _ => throw new ArgumentOutOfRangeException(nameof(ErrorType))
         };
     }
@@ -30,6 +33,18 @@ public class ApiControllerBase : ControllerBase
         }
             
         return id;
+    }
+
+    protected string? TryObtainUserRole()
+    {
+        var roleClaim = User.FindFirst(ClaimTypes.Role);
+            
+        if (string.IsNullOrWhiteSpace(roleClaim?.Value))
+        {
+            return null;
+        }
+
+        return roleClaim.Value;
     }
 
     private ErrorResponse ToErrorResponse(Result result)

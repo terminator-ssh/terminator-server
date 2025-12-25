@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Terminator.Application.Common;
 using Terminator.Core.Common.Errors;
 using Terminator.Core.Entities;
+using Entities =  Terminator.Core.Entities;
 using Terminator.Core.Result;
 
 namespace Terminator.Application.Features.Sync;
@@ -99,7 +100,7 @@ public class Handler(
     }
 
     // TODO: Mappers
-    private EncryptedBlob MapEncryptedBlob(EncryptedBlobDto dto, User user)
+    private EncryptedBlob MapEncryptedBlob(EncryptedBlobDto dto, Entities.User user)
     {
         var iv = Convert.FromBase64String(dto.Iv);
         var blob = Convert.FromBase64String(dto.Blob);

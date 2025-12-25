@@ -1,4 +1,5 @@
-﻿using Terminator.Core.Result;
+﻿using Terminator.Core.Common;
+using Terminator.Core.Result;
 
 namespace Terminator.Application.Common.Errors;
 
@@ -11,7 +12,7 @@ public static partial class ValidationErrors
             "The username is required.");
         public static readonly Error UsernameTooLong = new(
             "Auth.Username.TooLong", 
-            "Username must not exceed 100 characters.");
+            $"Username must not exceed {UserConstants.MaxUsernameLength} characters.");
         
         public static readonly Error AuthSaltRequired = new(
             "Auth.AuthSalt.Required", 

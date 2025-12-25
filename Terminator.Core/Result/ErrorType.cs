@@ -3,6 +3,8 @@
 public enum ErrorType
 {
     None,
-    Validation
+    Validation,
+    NotFound,
+    Unauthorized
     // TODO
 }
