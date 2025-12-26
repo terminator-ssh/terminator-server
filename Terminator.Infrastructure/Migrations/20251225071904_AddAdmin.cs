@@ -6,32 +6,36 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Terminator.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class AddAdmin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "EncryptedBlobs",
+                name: "Admins",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<long>(type: "INTEGER", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    InitializationVector = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    Blob = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    Username = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EncryptedBlobs", x => x.Id);
+                    table.PrimaryKey("PK_Admins", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Admins_Username",
+                table: "Admins",
+                column: "Username",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EncryptedBlobs");
+                name: "Admins");
         }
     }
 }

@@ -14,9 +14,9 @@ public class Result<T> : Result, IResultFactory<Result<T>>
 
     public static Result<T> Success(T? value) => new(value, ErrorType.None, []);
 
-    public static Result<T> Error(ErrorType errorType, IReadOnlyList<Error> errors)
+    public new static Result<T> Error(ErrorType errorType, IReadOnlyList<Error> errors)
         => new(default, errorType, errors);
 
-    public static Result<T> Error(ErrorType errorType, Error error)
+    public new static Result<T> Error(ErrorType errorType, Error error)
         => new(default, errorType, [error]);
 }

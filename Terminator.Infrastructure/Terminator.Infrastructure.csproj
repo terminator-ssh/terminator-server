@@ -16,10 +16,16 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Terminator.Application\Terminator.Application.csproj" />
       <ProjectReference Include="..\Terminator.Core\Terminator.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\" />
     </ItemGroup>
 
 </Project>

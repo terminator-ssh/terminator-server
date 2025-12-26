@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Terminator.Core\Terminator.Core.csproj" />
-      <ProjectReference Include="..\Terminator.Infrastructure\Terminator.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -17,6 +16,7 @@
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
       <PackageReference Include="MediatR" Version="14.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.1" />
     </ItemGroup>
 
 </Project>
