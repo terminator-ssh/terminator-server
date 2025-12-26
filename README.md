@@ -2,7 +2,7 @@
 
 Make sure Docker is installed.
 ```
-docker run deeplerg/terminator --name terminator -v terminator-data:/app/data -p 8080:8080 -d
+docker run --name terminator -v terminator-data:/app/data -p 8080:8080 -d deeplerg/terminator
 ```
 
 It is recommended to provide a `SecretKey` (see configuration section below) so that existing authentication tokens remain valid across restarts. 
