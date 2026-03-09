@@ -35,3 +35,10 @@ If no admin users exist and this section is not empty, create an admin user with
 
 - `DefaultAdmin__Username`: Creates this admin on startup if no admins exist. Default: `admin`
 - `DefaultAdmin__Password`: Password for the default admin. Default: `admin`
+
+### `UserSettings`
+
+User account options.
+
+- `UserSettings__DefaultAccountType`: Account type assigned to newly registered users. Accepted values: `Full`, `Limited`. Default: `Full`
+- `UserSettings__BlobLimit`: Maximum number of active blobs a `Limited` user can have. Set to `0` for unlimited. Default: `0`

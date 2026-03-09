@@ -2,9 +2,10 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Terminator.Application.Common;
+using Terminator.Application.Common.Options;
 using Terminator.Core.Common.Errors;
-using Terminator.Core.Entities;
 using Entities =  Terminator.Core.Entities;
 using Terminator.Core.Result;
 
@@ -13,9 +14,12 @@ namespace Terminator.Application.Features.Auth.Register;
 public class Handler(
     IApplicationDbContext db, 
     IJwtProvider jwtProvider,
+    IOptions<UserOptions> options,
     ILogger<Handler> logger) 
     : IRequestHandler<Request, Result<Response>>
 {
+    private readonly UserOptions _userOptions = options.Value;
+    
     public async Task<Result<Response>> Handle(Request request, CancellationToken ct)
     {
         var username = request.Username;
@@ -34,7 +38,8 @@ public class Handler(
             Convert.FromBase64String(request.KeySalt),
             Convert.FromBase64String(request.AuthSalt),
             Convert.FromBase64String(request.EncryptedMasterKey),
-            loginHash
+            loginHash,
+            _userOptions.DefaultAccountType
         );
         
         db.Users.Add(user);

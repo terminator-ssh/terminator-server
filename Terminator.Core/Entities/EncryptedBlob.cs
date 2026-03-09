@@ -1,4 +1,5 @@
-﻿using Terminator.Core.Common;
+﻿using System.Linq.Expressions;
+using Terminator.Core.Common;
 
 namespace Terminator.Core.Entities;
 
@@ -22,4 +23,7 @@ public class EncryptedBlob : BaseEntity<Guid>
     public byte[] InitializationVector { get; set; }
     public byte[] Blob { get; set; }
     public required User User { get; set; }
+    
+    public static readonly Expression<Func<EncryptedBlob, bool>> ActiveBlobFilter 
+        = b => !b.IsDeleted;
 }

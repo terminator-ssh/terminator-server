@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Terminator.Core.Common;
 using Delete = Terminator.Application.Features.User.Delete;
 using ListAll = Terminator.Application.Features.User.ListAll;
+using GetActiveBlobCount = Terminator.Application.Features.User.GetActiveBlobCount;
 
 namespace Terminator.Web.Controllers;
 
@@ -33,6 +34,27 @@ public class UserController(ISender sender) : ApiControllerBase
         if (!result.IsSuccessful) return HandleError(result);
 
         return NoContent();
+    }
+    
+    [HttpGet("blobs/count")]
+    [Authorize(Roles = RoleType.UserRole)]
+    [Produces(typeof(GetActiveBlobCount.Response))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetActiveBlobCount()
+    {
+        var id = TryObtainUserId();
+        if (id is null)
+        {
+            return Unauthorized();
+        }
+        
+        var userId = id.Value;
+        
+        var result = await sender.Send(new GetActiveBlobCount.Request(userId));
+
+        if (!result.IsSuccessful) return HandleError(result);
+
+        return Ok(result.Value);
     }
     
     [HttpGet("list")]

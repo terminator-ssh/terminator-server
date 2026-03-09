@@ -2,6 +2,7 @@
 using Asp.Versioning.ApiExplorer;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Terminator.Application.Common.Options;
 using Terminator.Application.Extensions;
 using Terminator.Application.Features.Auth.Admin.Register;
 using Terminator.Core.Entities;
@@ -20,6 +21,11 @@ var services = builder.Services;
 
 services.AddOptions<AuthOptions>()
     .Bind(builder.Configuration.GetSection(AuthOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+services.AddOptions<UserOptions>()
+    .Bind(builder.Configuration.GetSection(UserOptions.SectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 

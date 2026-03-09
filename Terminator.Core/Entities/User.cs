@@ -10,13 +10,15 @@ public class User : BaseEntity<Guid>
         byte[] keySalt, 
         byte[] authSalt, 
         byte[] encryptedMasterKey, 
-        byte[] loginHash) : base(id)
+        byte[] loginHash,
+        UserAccountType accountType) : base(id)
     {
         Username = username;
         KeySalt = keySalt;
         AuthSalt = authSalt;
         EncryptedMasterKey = encryptedMasterKey;
         LoginHash = loginHash;
+        AccountType = accountType;
     }
 
     public string Username { get; set; }
@@ -25,4 +27,13 @@ public class User : BaseEntity<Guid>
     public byte[] EncryptedMasterKey { get; set; }
     public byte[] LoginHash { get; set; }
     public IList<EncryptedBlob> Blobs { get; set; } = new List<EncryptedBlob>();
+    public UserAccountType AccountType { get; set; }
+    
+    public bool HasReachedBlobLimit(int activeBlobCount, int blobLimit)
+    {
+        if (blobLimit <= 0 || AccountType == UserAccountType.Full) 
+            return false;
+
+        return activeBlobCount >= blobLimit;
+    }
 }

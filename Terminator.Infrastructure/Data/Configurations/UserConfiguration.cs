@@ -25,6 +25,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasIndex(u => u.Username)
             .IsUnique();
         
+        builder.Property(u => u.AccountType)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasDefaultValue(UserAccountType.Full)
+            .HasSentinel(UserAccountType.Unspecified);
+        
         builder.Property(u => u.AuthSalt).IsRequired();
         builder.Property(u => u.KeySalt).IsRequired();
         builder.Property(u => u.EncryptedMasterKey).IsRequired();

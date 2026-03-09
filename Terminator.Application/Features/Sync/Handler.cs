@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Terminator.Application.Common;
+using Terminator.Application.Common.Options;
 using Terminator.Core.Common.Errors;
 using Terminator.Core.Entities;
 using Entities =  Terminator.Core.Entities;
@@ -12,8 +14,11 @@ namespace Terminator.Application.Features.Sync;
 public class Handler(
     IApplicationDbContext db, 
     TimeProvider timeProvider,
+    IOptions<UserOptions> options,
     ILogger<Handler> logger) : IRequestHandler<Request, Result<Response>>
 {
+    private readonly UserOptions _userOptions = options.Value;
+    
     public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
     {
         var user = await db.Users
@@ -54,6 +59,8 @@ public class Handler(
                     .TryGetValue(clientBlobId, out var serverBlobTimestamp))
             {
                 var encryptedBlob = MapEncryptedBlob(clientBlob, user);
+                // don't filter just in case?
+                //if(!encryptedBlob.IsDeleted)
                 blobsToAdd.Add(encryptedBlob);
             }
 
@@ -67,6 +74,21 @@ public class Handler(
             {
                 clientStaleIds.Add(clientBlob.Id);
             }
+        }
+
+        int existingActiveBlobCount =
+            await db.EncryptedBlobs
+                .Where(x => x.User.Id == request.UserId)
+                .CountAsync(EncryptedBlob.ActiveBlobFilter, cancellationToken);
+
+        int newActiveBlobCount = blobsToAdd.Count(EncryptedBlob.ActiveBlobFilter.Compile());
+        
+        int totalAfterSync = existingActiveBlobCount + newActiveBlobCount;
+
+        // TODO figure out good ux that still allows updates to go through
+        if (user.HasReachedBlobLimit(totalAfterSync, _userOptions.BlobLimit))
+        {
+            return Result<Response>.Error(ErrorType.Validation, DomainErrors.User.BlobLimitReached);
         }
         
         db.EncryptedBlobs.AddRange(blobsToAdd);

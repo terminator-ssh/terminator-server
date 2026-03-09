@@ -14,5 +14,8 @@ public static partial class DomainErrors
         
         public static readonly Error InvalidCredentials = new(
             "User.InvalidCredentials", "Invalid credentials.");
+
+        public static readonly Error BlobLimitReached = new(
+            "User.BlobLimitReached", "Blob limit reached.");
     }
 }
