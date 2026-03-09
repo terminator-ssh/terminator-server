@@ -38,7 +38,7 @@ public class UserController(ISender sender) : ApiControllerBase
     [HttpGet("list")]
     [Authorize(Roles = RoleType.AdminRole)]
     [Produces(typeof(ListAll.Response))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ListAll()
     {
         var result = await sender.Send(new ListAll.Request());
