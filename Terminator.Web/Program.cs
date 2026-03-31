@@ -2,6 +2,8 @@
 using Asp.Versioning.ApiExplorer;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Exporter.Prometheus;
 using Terminator.Application.Common.Options;
 using Terminator.Application.Extensions;
 using Terminator.Application.Features.Auth.Admin.Register;
@@ -40,6 +42,27 @@ services.AddApplicationServices();
 services.AddInfrastructureServices(builder.Configuration);
 services.AddApiServices(builder.Configuration);
 
+var metricsOptions = builder.Configuration
+    .GetSection(MetricsOptions.SectionName)
+    .Get<MetricsOptions>();
+
+if (metricsOptions?.Enabled == true)
+{
+    services.AddSingleton<MetricsCollector>();
+
+    var otel = services.AddOpenTelemetry();
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddMeter("Microsoft.AspNetCore.Hosting")
+        .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+        
+        .AddMeter(MetricsCollector.MeterName)
+        
+        .AddPrometheusExporter()
+    );
+}
+
 
 var app = builder.Build();
 
@@ -73,6 +96,13 @@ if (app.Environment.IsDevelopment())
 
         options.RoutePrefix = "swagger";
     });
+}
+
+if (metricsOptions?.Enabled == true)
+{
+    app.Services.GetRequiredService<MetricsCollector>();
+    
+    app.MapPrometheusScrapingEndpoint();
 }
 
 app.MapControllers();
