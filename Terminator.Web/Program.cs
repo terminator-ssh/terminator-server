@@ -29,6 +29,11 @@ services.AddOptions<UserOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+services.AddOptions<MetricsOptions>()
+    .Bind(builder.Configuration.GetSection(MetricsOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 services.AddOpenApi();
 
 services.AddApplicationServices();

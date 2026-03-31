@@ -12,7 +12,8 @@ using Terminator.Core.Result;
 namespace Terminator.Application.Features.Sync;
 
 public class Handler(
-    IApplicationDbContext db, 
+    IApplicationDbContext db,
+    IPublisher publisher,
     TimeProvider timeProvider,
     IOptions<UserOptions> options,
     ILogger<Handler> logger) : IRequestHandler<Request, Result<Response>>
@@ -118,6 +119,10 @@ public class Handler(
         
         var response = new Response(newBlobDtos, timeProvider.GetUtcNow());
 
+        await publisher.Publish(
+            new UserSyncedEvent(user.Id, timeProvider.GetUtcNow()), 
+            cancellationToken);
+        
         return Result<Response>.Success(response);
     }
 
