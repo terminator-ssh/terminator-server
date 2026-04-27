@@ -23,16 +23,6 @@ public class EncryptedBlobDtoValidator : AbstractValidator<EncryptedBlobDto>
             .Must(Base64ValidationHelper.IsValidBase64)
             .WithErrorCode(ValidationErrors.Sync.EncryptedBlob.BlobInvalidFormat.Code)
             .WithMessage(ValidationErrors.Sync.EncryptedBlob.BlobInvalidFormat.Message);
-        
-        RuleFor(x => x.Iv)
-            .NotEmpty()
-            .WithErrorCode(ValidationErrors.Sync.EncryptedBlob.IvRequired.Code)
-            .WithMessage(ValidationErrors.Sync.EncryptedBlob.IvRequired.Message)
-            
-            .Must(iv => Base64ValidationHelper
-                .IsValidBase64AndLength(iv, CryptoConstants.AesGcmIvLengthBytes))
-            .WithErrorCode(ValidationErrors.Sync.EncryptedBlob.IvInvalidFormat.Code)
-            .WithMessage(ValidationErrors.Sync.EncryptedBlob.IvInvalidFormat.Message);
 
         RuleFor(x => x.UpdatedAt)
             .LessThanOrEqualTo(DateTimeOffset.UtcNow)

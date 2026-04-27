@@ -6,5 +6,4 @@ public record EncryptedBlobDto(
     Guid Id,
     DateTimeOffset UpdatedAt,
     bool IsDeleted,
-    string Iv,
     string Blob);

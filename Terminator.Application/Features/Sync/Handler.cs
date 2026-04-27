@@ -129,27 +129,23 @@ public class Handler(
     // TODO: Mappers
     private EncryptedBlob MapEncryptedBlob(EncryptedBlobDto dto, Entities.User user)
     {
-        var iv = Convert.FromBase64String(dto.Iv);
         var blob = Convert.FromBase64String(dto.Blob);
 
         return new EncryptedBlob(
             dto.Id,
             dto.UpdatedAt,
             dto.IsDeleted,
-            iv,
             blob) { User = user };
     }
 
     private EncryptedBlobDto MapEncryptedBlobDto(EncryptedBlob encryptedBlob)
     {
-        var iv = Convert.ToBase64String(encryptedBlob.InitializationVector);
         var blob = Convert.ToBase64String(encryptedBlob.Blob);
 
         return new EncryptedBlobDto(
             encryptedBlob.Id,
             encryptedBlob.UpdatedAt,
             encryptedBlob.IsDeleted,
-            iv,
             blob);
     }
 }

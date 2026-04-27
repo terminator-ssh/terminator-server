@@ -19,14 +19,6 @@ public static partial class ValidationErrors
             public static readonly Error BlobInvalidFormat = new(
                 "Sync.EncryptedBlob.Blob.InvalidFormat",
                 "The blob data must be a valid Base64 string.");
-            
-            public static readonly Error IvRequired = new(
-                "Sync.EncryptedBlob.Iv.Required", 
-                "The initialization vector data is required.");
-
-            public static readonly Error IvInvalidFormat = new(
-                "Sync.EncryptedBlob.Iv.InvalidFormat",
-                "The initialization vector data must be a valid Base64 string.");
         }
     }
 }
